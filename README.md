@@ -18,7 +18,7 @@ This project provides an automated, Python-based solution for sending bulk SMS m
 ## Prerequisites
 
 1. **Python 3.x**: Ensure Python 3 is installed on your Windows machine.
-2. **Android Platform Tools (ADB)**: The scripts require `adb.exe`. Download it from [Google's Official Site](https://developer.android.com/studio/releases/platform-tools).
+2. **Android Platform Tools (ADB)**: The required `adb.exe` is already included in this repository as a zipped file (`platform-tools-latest-windows.zip`).
 3. **Android Device**:
     - Must have **Google Messages** set as the default SMS application.
     - **Developer Options** must be enabled on your phone.
@@ -28,9 +28,12 @@ This project provides an automated, Python-based solution for sending bulk SMS m
 
 ## Setup Instructions
 
-1. **Update ADB Path**: 
-   Open `sms.py`, `sms_wifi.py`, and `find_send.py` in a text editor and update the `ADB` variable with the exact absolute path to your `adb.exe`. 
-   *(By default, it is set to `C:\Users\shivam\Downloads\platform-tools-latest-windows\platform-tools\adb.exe`)*
+1. **Extract Platform Tools**:
+   Extract the included `platform-tools-latest-windows.zip` into a folder on your computer (for example, extract it directly into this project folder so you get a `platform-tools` directory).
+
+2. **Update ADB Path**: 
+   Open `sms.py`, `sms_wifi.py`, and `find_send.py` in a text editor and update the `ADB` variable with the exact absolute path to your newly extracted `adb.exe`. 
+   *(For example: `ADB = r"C:\Users\shivam\Desktop\For marketing\Bulk SMS\platform-tools\adb.exe"`)*
 
 2. **Configure Your Input Files**:
    - **`message.txt`**: Write your SMS content inside this file. If the file doesn't exist, the script will create it with a placeholder message.
