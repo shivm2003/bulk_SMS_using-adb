@@ -1,0 +1,10 @@
+If you connect your Android phone to your PC (USB debugging enabled), you can automate SMS using:
+
+Android Debug Bridge
+Python (subprocess) to control the phone
+UI automation tools such as uiautomator2
+
+This is useful if you want to:
+C:\Users\shivam\Desktop\For marketing\Bulk SMS\numbers.txt where the numbers are stored and also make after sending the message it must be removed from numbers.txt and add delivered.txt with the Status and timestamp
+Personalize each message
+Send hundreds of SMS through your phone's SIM

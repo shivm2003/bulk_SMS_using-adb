@@ -1,0 +1,7 @@
+﻿adb.exe : adb.exe: device offline
+At line:1 char:1
++ & "C:\Users\shivam\Downloads\platform-tools-latest-windows\platform-t ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (adb.exe: device offline:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
