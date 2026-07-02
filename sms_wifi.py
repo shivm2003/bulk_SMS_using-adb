@@ -5,6 +5,7 @@ import time
 import os
 import urllib.parse
 import sys
+import xml.etree.ElementTree as ET
 
 NUMBERS_FILE = "numbers.txt"
 DELIVERED_FILE = "delivered.txt"
@@ -61,9 +62,57 @@ def adb_run(*args, retries=2):
             time.sleep(2)
     return result
 
-# Send button coordinates for Google Messages on Vivo 1917 (1080x2340)
+# Previous hardcoded coordinates (fallback)
 SEND_TAP_X = 972
 SEND_TAP_Y = 2081
+
+def get_send_button_coords():
+    """Dynamically finds the send button coordinates using uiautomator dump."""
+    # Dump the UI hierarchy
+    adb_run("shell", "uiautomator dump /sdcard/window_dump.xml")
+    result = adb_run("shell", "cat /sdcard/window_dump.xml")
+    xml_data = result.stdout
+    
+    try:
+        # Clean up the output in case there's non-XML text before the XML
+        xml_start = xml_data.find("<?xml")
+        if xml_start != -1:
+            xml_data = xml_data[xml_start:]
+        else:
+            xml_start = xml_data.find("<hierarchy")
+            if xml_start != -1:
+                xml_data = xml_data[xml_start:]
+                
+        if not xml_data.strip():
+            return None
+
+        root = ET.fromstring(xml_data)
+        
+        # Traverse all nodes to find the send button
+        for node in root.iter('node'):
+            content_desc = node.get('content-desc', '').lower()
+            resource_id = node.get('resource-id', '').lower()
+            
+            is_send_button = False
+            if 'send_message_button' in resource_id:
+                is_send_button = True
+            elif content_desc in ['send sms', 'send message', 'send']:
+                is_send_button = True
+                
+            if is_send_button:
+                bounds = node.get('bounds')
+                if bounds:
+                    # bounds format: [x1,y1][x2,y2]
+                    match = re.match(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match:
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        center_x = (x1 + x2) // 2
+                        center_y = (y1 + y2) // 2
+                        return center_x, center_y
+    except Exception as e:
+        print(f"  [Warning] XML parsing error: {e}")
+        
+    return None
 
 def send_sms(number, message):
     """
@@ -85,13 +134,25 @@ def send_sms(number, message):
         # Step 2: Wait for the app to fully load and render the message
         time.sleep(3.0)
         
-        # Step 3: Tap the Send button directly
-        tap_result = adb_run("shell", f"input tap {SEND_TAP_X} {SEND_TAP_Y}")
-        if tap_result.returncode == 0:
-            print(f"  ✓ Tapped Send at ({SEND_TAP_X}, {SEND_TAP_Y})")
+        # Step 3: Find the Send button dynamically
+        coords = get_send_button_coords()
+        
+        if coords:
+            tap_x, tap_y = coords
+            tap_result = adb_run("shell", f"input tap {tap_x} {tap_y}")
+            if tap_result.returncode == 0:
+                print(f"  ✓ Tapped Send dynamically at ({tap_x}, {tap_y})")
+            else:
+                print(f"  ✗ Failed to tap Send button: {tap_result.stderr.strip()}")
+                return False
         else:
-            print(f"  ✗ Failed to tap Send button: {tap_result.stderr.strip()}")
-            return False
+            print("  [Warning] Could not find Send button dynamically. Trying alternative keyevents...")
+            # Fallback 1: Try DPAD Right then Enter
+            adb_run("shell", "input keyevent 22")
+            adb_run("shell", "input keyevent 66")
+            # Fallback 2: Try tapping the hardcoded coordinates
+            adb_run("shell", f"input tap {SEND_TAP_X} {SEND_TAP_Y}")
+            print(f"  ✓ Attempted fallback methods (Keyevents + Tap at {SEND_TAP_X}, {SEND_TAP_Y})")
         
         # Step 4: Wait before sending next SMS
         time.sleep(2.0)
