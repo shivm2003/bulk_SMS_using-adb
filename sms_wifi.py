@@ -11,7 +11,7 @@ NUMBERS_FILE = "numbers.txt"
 DELIVERED_FILE = "delivered.txt"
 FAILED_FILE = "failed.txt"
 MESSAGE_FILE = "message.txt"
-ADB = r"C:\Users\shivam\Downloads\platform-tools-latest-windows\platform-tools\adb.exe"
+ADB = r"D:\Development\General Projects\bulk_SMS_using-adb\platform-tools-latest-windows\platform-tools\adb.exe"
 
 # We will set this when the script starts
 DEVICE_IP = ""
