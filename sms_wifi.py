@@ -7,7 +7,7 @@ import urllib.parse
 import sys
 import xml.etree.ElementTree as ET
 
-NUMBERS_FILE = "numbers.txt"
+NUMBERS_FILE = "number.txt"
 DELIVERED_FILE = "delivered.txt"
 FAILED_FILE = "failed.txt"
 MESSAGE_FILE = "message.txt"
