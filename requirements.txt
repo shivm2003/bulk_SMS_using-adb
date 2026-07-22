@@ -1,0 +1,4 @@
+# No external Python packages are required for this project.
+# The scripts use only the Python standard library modules.
+# Run this in the project venv:
+#   .venv\Scripts\python.exe -m pip install -r requirements.txt
